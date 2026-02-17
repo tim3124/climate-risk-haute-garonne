@@ -13,7 +13,7 @@ def classer(valeur):
         return 5
     
 
- Exemple test
+# Exemple test
 exposition = 0.65
 vulnerabilite = 0.7
 
