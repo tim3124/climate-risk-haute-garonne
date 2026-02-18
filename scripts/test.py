@@ -11,7 +11,7 @@ DATA_METEO_PATH = PROJ_PATH / "data" / "raw"
 OUTPUT_PATH = PROJ_PATH / "data" / "processed"
 
 #Lecture du netCDF
-meteo_file = DATA_METEO_PATH / "31069001_TOULOUSE-BLAGNAC_MTO_1H_2025.nc"
+meteo_file = DATA_METEO_PATH / "31069001_TOULOUSE-BLAGNAC_MTO_1H_2024.nc"
 ds = xr.open_dataset(meteo_file)
 
 print(ds)
