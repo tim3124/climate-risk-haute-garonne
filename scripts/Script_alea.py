@@ -34,3 +34,31 @@ print(f"Lignes invalides températures : {len(invalid_temp)}")
 
 # Convertir time en datetime si nécessaire
 df['time'] = pd.to_datetime(df['time'])
+
+#Ajout du champ date
+df['date'] = df['time'].dt.date
+df['month'] = df['time'].dt.month
+
+# ---- A. Journalier ----
+daily = df.groupby('date').agg(
+    ta_mean = ('ta', 'mean'),
+    ta_max = ('ta_max', 'max'),
+    ta_min = ('ta_min', 'min'),
+    ws_mean = ('ws', 'mean')  
+).reset_index()
+
+# ---- B. Mensuel ----
+monthly = df.groupby('month').agg(
+    ta_mean = ('ta', 'mean'),
+    ta_max = ('ta_max', 'max'),
+    ta_min = ('ta_min', 'min'),
+    ws_mean = ('ws', 'mean')
+).reset_index()
+
+# ---- C. Annuel ----
+annual = df.agg(
+    ta_mean = ('ta', 'mean'),
+    ta_max = ('ta_max', 'max'),
+    ta_min = ('ta_min', 'min'),
+    ws_mean = ('ws', 'mean')
+)
