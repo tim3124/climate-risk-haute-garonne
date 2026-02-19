@@ -102,3 +102,12 @@ daily['heavy_wind_day'] = daily['ws_mean'] > 100
 num_heavy_wind_days = daily['heavy_wind_day'].sum()
 
 print(f"Jours très venteux (>100km/h) : {num_heavy_wind_days}")
+
+#Jours daffilées de pluie
+daily['rain_day'] = daily['pre_sum'] > 1
+
+# Calcul séquences consécutives
+daily['group'] = (daily['rain_day'] != daily['rain_day'].shift()).cumsum()
+seq = daily[daily['rain_day']].groupby('group').size()
+
+num_long_rain_sequences = (seq >= 10).sum()
