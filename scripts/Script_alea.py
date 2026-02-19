@@ -111,3 +111,7 @@ daily['group'] = (daily['rain_day'] != daily['rain_day'].shift()).cumsum()
 seq = daily[daily['rain_day']].groupby('group').size()
 
 num_long_rain_sequences = (seq >= 10).sum()
+
+#Vérification des données
+daily.to_csv(OUTPUT_PATH / f"{file.stem}_daily.csv", index=False)
+monthly.to_csv(OUTPUT_PATH / f"{file.stem}_monthly.csv", index=False)
