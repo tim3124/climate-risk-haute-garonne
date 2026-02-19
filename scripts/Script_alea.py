@@ -27,3 +27,7 @@ print(df.head())
 # ------------------------------
 print("Valeurs manquantes par variable :")
 print(df.isnull().sum())
+
+#Vérification incohérence des témpératures.
+invalid_temp = df[(df['ta'] < df['ta_min']) | (df['ta'] > df['ta_max'])]
+print(f"Lignes invalides températures : {len(invalid_temp)}")
