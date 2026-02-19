@@ -31,3 +31,6 @@ print(df.isnull().sum())
 #Vérification incohérence des témpératures.
 invalid_temp = df[(df['ta'] < df['ta_min']) | (df['ta'] > df['ta_max'])]
 print(f"Lignes invalides températures : {len(invalid_temp)}")
+
+# Convertir time en datetime si nécessaire
+df['time'] = pd.to_datetime(df['time'])
