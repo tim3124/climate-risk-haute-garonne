@@ -17,3 +17,13 @@ ds = xr.open_dataset(meteo_file)
 print(ds)
 print(ds.dims)
 print(ds.variables)
+
+# ---- Conversion en DataFrame horaire ----
+df = ds.to_dataframe().reset_index()  # index = time
+print(df.head())
+
+# ------------------------------
+# 1️) Vérification qualité
+# ------------------------------
+print("Valeurs manquantes par variable :")
+print(df.isnull().sum())
