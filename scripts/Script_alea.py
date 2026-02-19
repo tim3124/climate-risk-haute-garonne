@@ -44,6 +44,7 @@ daily = df.groupby('date').agg(
     ta_mean = ('ta', 'mean'),
     ta_max = ('ta_max', 'max'),
     ta_min = ('ta_min', 'min'),
+    pre_mean = ('cumul_precip','mean'),
     ws_mean = ('ws', 'mean')  
 ).reset_index()
 
@@ -52,6 +53,7 @@ monthly = df.groupby('month').agg(
     ta_mean = ('ta', 'mean'),
     ta_max = ('ta_max', 'max'),
     ta_min = ('ta_min', 'min'),
+    pre_mean = ('cumul_precip','mean'),
     ws_mean = ('ws', 'mean')
 ).reset_index()
 
@@ -60,6 +62,7 @@ annual = df.agg(
     ta_mean = ('ta', 'mean'),
     ta_max = ('ta_max', 'max'),
     ta_min = ('ta_min', 'min'),
+    pre_mean = ('cumul_precip','mean'),
     ws_mean = ('ws', 'mean')
 )
 
@@ -72,3 +75,10 @@ daily['hot_day'] = daily['ta_mean'] > 30
 num_hot_days = daily['hot_day'].sum()
 
 print(f"Jours chauds (>30°C) : {num_hot_days}")
+
+# Nombre de jours precipitations > 50mm
+
+daily['heavy_rain_day'] = daily['pre_mean'] > 30
+num_heavy_rain_days = daily['heavy_rain_day'].sum()
+
+print(f"Jours très pluvieux (>30mm) : {num_heavy_rain_days}")
