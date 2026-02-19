@@ -10,14 +10,17 @@ PROJ_PATH = Path(r"D:/8-Projet/Code/Meteo_France/climate-risk-haute-garonne")
 DATA_METEO_PATH = PROJ_PATH / "data" / "raw" 
 OUTPUT_PATH = PROJ_PATH / "data" / "processed"
 
-#Lecture du netCDF
-meteo_file = DATA_METEO_PATH / "31069001_TOULOUSE-BLAGNAC_MTO_1H_2024.nc"
-ds = xr.open_dataset(meteo_file)
+#Lecture des netCDF
+nc_files = list(DATA_METEO_PATH.glob("*.nc"))
 
-print(ds)
-print(ds.dims)
-print(ds.variables)
+results = []
 
+for file in nc_files:
+    print(f"Traitement : {file.name}")
+    
+    ds = xr.open_dataset(file)
+    df = ds.to_dataframe().reset_index()
+    
 # ---- Conversion en DataFrame horaire ----
 df = ds.to_dataframe().reset_index()  # index = time
 print(df.head())
