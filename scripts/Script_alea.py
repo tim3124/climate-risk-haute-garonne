@@ -84,7 +84,7 @@ annual = df.agg(
 # ------------------------------
 
 # Nombre de jours > 30°C
-daily['hot_day'] = daily['ta_mean'] > 30
+daily['hot_day'] = daily['ta_max'] > 30
 num_hot_days = daily['hot_day'].sum()
 
 print(f"Jours chauds (>30°C) : {num_hot_days}")
