@@ -31,6 +31,9 @@ df['ta'] = df['ta'] - 273.15
 df['ta_max'] = df['ta_max'] - 273.15
 df['ta_min'] = df['ta_min'] - 273.15
 
+#Conversion en km/h
+df['ws'] = df['ws'] * 3.6
+
 
 # ------------------------------
 # 1️) Vérification qualité
