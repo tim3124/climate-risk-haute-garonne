@@ -21,97 +21,107 @@ for file in nc_files:
     ds = xr.open_dataset(file)
     df = ds.to_dataframe().reset_index()
     
-# ---- Conversion en DataFrame horaire ----
-df = ds.to_dataframe().reset_index()  # index = time
-print(df.head())
+    # ---- Conversion en DataFrame horaire ----
+    df = ds.to_dataframe().reset_index()  # index = time
+    print(df.head())
 
-#Vérification aux bonnes unités
+    #Vérification aux bonnes unités
 
-df['ta'] = df['ta'] - 273.15
-df['ta_max'] = df['ta_max'] - 273.15
-df['ta_min'] = df['ta_min'] - 273.15
+    df['ta'] = df['ta'] - 273.15
+    df['ta_max'] = df['ta_max'] - 273.15
+    df['ta_min'] = df['ta_min'] - 273.15
 
-#Conversion en km/h
-df['ws'] = df['ws'] * 3.6
+    #Conversion en km/h
+    df['ws'] = df['ws'] * 3.6
 
 
-# ------------------------------
-# 1️) Vérification qualité
-# ------------------------------
-print("Valeurs manquantes par variable :")
-print(df.isnull().sum())
+    # ------------------------------
+    # 1️) Vérification qualité
+    # ------------------------------
+    print("Valeurs manquantes par variable :")
+    print(df.isnull().sum())
 
-#Vérification incohérence des témpératures.
-invalid_temp = df[(df['ta'] < df['ta_min']) | (df['ta'] > df['ta_max'])]
-print(f"Lignes invalides températures : {len(invalid_temp)}")
+    #Vérification incohérence des témpératures.
+    invalid_temp = df[(df['ta'] < df['ta_min']) | (df['ta'] > df['ta_max'])]
+    print(f"Lignes invalides températures : {len(invalid_temp)}")
 
-# Convertir time en datetime si nécessaire
-df['time'] = pd.to_datetime(df['time'])
+    # Convertir time en datetime si nécessaire
+    df['time'] = pd.to_datetime(df['time'])
 
-#Ajout du champ date
-df['date'] = df['time'].dt.date
-df['month'] = df['time'].dt.month
+    #Ajout du champ date
+    df['date'] = df['time'].dt.date
+    df['month'] = df['time'].dt.month
 
-# ---- A. Journalier ----
-daily = df.groupby('date').agg(
-    ta_mean=('ta','mean'),
-    ta_max=('ta_max','max'),
-    ta_min=('ta_min','min'),
-    pre_sum=('cumul_precip','sum'),
-    ws_max=('ws','max')
-).reset_index()
+    # ---- A. Journalier ----
+    daily = df.groupby('date').agg(
+        ta_mean=('ta','mean'),
+        ta_max=('ta_max','max'),
+        ta_min=('ta_min','min'),
+        pre_sum=('cumul_precip','sum'),
+        ws_max=('ws','max')
+    ).reset_index()
 
-# ---- B. Mensuel ----
-monthly = df.groupby('month').agg(
-    ta_mean = ('ta', 'mean'),
-    ta_max = ('ta_max', 'max'),
-    ta_min = ('ta_min', 'min'),
-    pre_mean = ('cumul_precip','mean'),
-    ws_mean = ('ws', 'mean')
-).reset_index()
+    # ---- B. Mensuel ----
+    monthly = df.groupby('month').agg(
+        ta_mean = ('ta', 'mean'),
+        ta_max = ('ta_max', 'max'),
+        ta_min = ('ta_min', 'min'),
+        pre_mean = ('cumul_precip','mean'),
+        ws_mean = ('ws', 'mean')
+    ).reset_index()
 
-# ---- C. Annuel ----
-annual = df.agg(
-    ta_mean = ('ta', 'mean'),
-    ta_max = ('ta_max', 'max'),
-    ta_min = ('ta_min', 'min'),
-    pre_mean = ('cumul_precip','mean'),
-    ws_mean = ('ws', 'mean')
-)
+    # ---- C. Annuel ----
+    annual = df.agg(
+        ta_mean = ('ta', 'mean'),
+        ta_max = ('ta_max', 'max'),
+        ta_min = ('ta_min', 'min'),
+        pre_mean = ('cumul_precip','mean'),
+        ws_mean = ('ws', 'mean')
+    )
 
-# ------------------------------
-# Indicateurs climatiques
-# ------------------------------
+    # ------------------------------
+    # Indicateurs climatiques
+    # ------------------------------
 
-# Nombre de jours > 30°C
-daily['hot_day'] = daily['ta_max'] > 30
-num_hot_days = daily['hot_day'].sum()
+    # Nombre de jours > 30°C
+    daily['hot_day'] = daily['ta_max'] > 30
+    num_hot_days = daily['hot_day'].sum()
 
-print(f"Jours chauds (>30°C) : {num_hot_days}")
+    print(f"Jours chauds (>30°C) : {num_hot_days}")
 
-# Nombre de jours precipitations > 50mm
+    # Nombre de jours precipitations > 50mm
 
-daily['heavy_rain_day'] = daily['pre_mean'] > 30
-num_heavy_rain_days = daily['heavy_rain_day'].sum()
+    daily['heavy_rain_day'] = daily['pre_mean'] > 30
+    num_heavy_rain_days = daily['heavy_rain_day'].sum()
 
-print(f"Jours très pluvieux (>30mm) : {num_heavy_rain_days}")
+    print(f"Jours très pluvieux (>30mm) : {num_heavy_rain_days}")
 
-# Nombre de jours avec une vitesse de vent > 100km/h
+    # Nombre de jours avec une vitesse de vent > 100km/h
 
-daily['heavy_wind_day'] = daily['ws_mean'] > 100
-num_heavy_wind_days = daily['heavy_wind_day'].sum()
+    daily['heavy_wind_day'] = daily['ws_mean'] > 100
+    num_heavy_wind_days = daily['heavy_wind_day'].sum()
 
-print(f"Jours très venteux (>100km/h) : {num_heavy_wind_days}")
+    print(f"Jours très venteux (>100km/h) : {num_heavy_wind_days}")
 
-#Jours daffilées de pluie
-daily['rain_day'] = daily['pre_sum'] > 1
+    #Jours daffilées de pluie
+    daily['rain_day'] = daily['pre_sum'] > 1
 
-# Calcul séquences consécutives
-daily['group'] = (daily['rain_day'] != daily['rain_day'].shift()).cumsum()
-seq = daily[daily['rain_day']].groupby('group').size()
+    # Calcul séquences consécutives
+    daily['group'] = (daily['rain_day'] != daily['rain_day'].shift()).cumsum()
+    seq = daily[daily['rain_day']].groupby('group').size()
 
-num_long_rain_sequences = (seq >= 10).sum()
+    num_long_rain_sequences = (seq >= 10).sum()
 
-#Vérification des données
-daily.to_csv(OUTPUT_PATH / f"{file.stem}_daily.csv", index=False)
-monthly.to_csv(OUTPUT_PATH / f"{file.stem}_monthly.csv", index=False)
+    #Vérification des données
+    daily.to_csv(OUTPUT_PATH / f"{file.stem}_daily.csv", index=False)
+    monthly.to_csv(OUTPUT_PATH / f"{file.stem}_monthly.csv", index=False)
+
+    results.append({
+        "station": file.stem,
+        "hot_days": num_hot_days,
+        "heavy_rain_days": num_heavy_rain_days,
+        "heavy_wind_days": num_heavy_wind_days
+    })
+
+summary_df = pd.DataFrame(results)
+summary_df.to_csv(OUTPUT_PATH / "stations_summary_2024.csv", index=False)
