@@ -54,11 +54,11 @@ df['month'] = df['time'].dt.month
 
 # ---- A. Journalier ----
 daily = df.groupby('date').agg(
-    ta_mean = ('ta', 'mean'),
-    ta_max = ('ta_max', 'max'),
-    ta_min = ('ta_min', 'min'),
-    pre_mean = ('cumul_precip','mean'),
-    ws_mean = ('ws', 'mean')  
+    ta_mean=('ta','mean'),
+    ta_max=('ta_max','max'),
+    ta_min=('ta_min','min'),
+    pre_sum=('cumul_precip','sum'),
+    ws_max=('ws','max')
 ).reset_index()
 
 # ---- B. Mensuel ----
