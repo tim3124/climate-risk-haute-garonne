@@ -70,14 +70,6 @@ for file in nc_files:
         ws_mean = ('ws', 'mean')
     ).reset_index()
 
-    # ---- C. Annuel ----
-    annual = df.agg(
-        ta_mean = ('ta', 'mean'),
-        ta_max = ('ta_max', 'max'),
-        ta_min = ('ta_min', 'min'),
-        pre_mean = ('cumul_precip','mean'),
-        ws_mean = ('ws', 'mean')
-    )
 
     # ------------------------------
     # Indicateurs climatiques
@@ -91,14 +83,14 @@ for file in nc_files:
 
     # Nombre de jours precipitations > 50mm
 
-    daily['heavy_rain_day'] = daily['pre_mean'] > 30
+    daily['heavy_rain_day'] = daily['pre_sum'] > 50
     num_heavy_rain_days = daily['heavy_rain_day'].sum()
 
-    print(f"Jours très pluvieux (>30mm) : {num_heavy_rain_days}")
+    print(f"Jours très pluvieux (>50mm) : {num_heavy_rain_days}")
 
     # Nombre de jours avec une vitesse de vent > 100km/h
 
-    daily['heavy_wind_day'] = daily['ws_mean'] > 100
+    daily['heavy_wind_day'] = daily['ws_max'] > 100
     num_heavy_wind_days = daily['heavy_wind_day'].sum()
 
     print(f"Jours très venteux (>100km/h) : {num_heavy_wind_days}")
