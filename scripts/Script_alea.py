@@ -25,6 +25,13 @@ for file in nc_files:
 df = ds.to_dataframe().reset_index()  # index = time
 print(df.head())
 
+#Vérification aux bonnes unités
+
+df['ta'] = df['ta'] - 273.15
+df['ta_max'] = df['ta_max'] - 273.15
+df['ta_min'] = df['ta_min'] - 273.15
+
+
 # ------------------------------
 # 1️) Vérification qualité
 # ------------------------------
